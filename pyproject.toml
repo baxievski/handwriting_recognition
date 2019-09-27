@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "handwriting_recognition"
+version = "0.0.1"
+description = "Handwriting recognition for digits and cyrilic characters"
+authors = ["Bojan Adzievski <bojan.axievski@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+django = "^2.2"
+django-crispy-forms = "^1.7"
+numpy = "^1.17"
+sklearn = "^0.0.0"
+Pillow = "^6.1"
+uwsgi = "^2.0"
+scipy = "^1.3"
+psycopg2-binary = "^2.8"
+
+[tool.poetry.dev-dependencies]
+matplotlib = "^3.1"
+jupyterlab = "^1.0.3"
+pytest = "^5.0"
+ipdb = "^0.12.2"
+bpython = "^0.18.0"
+pytest-django = "^3.5"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

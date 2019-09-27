@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Handwriting recognition</title>
+
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.2.0/fabric.min.js'></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+    <script src="{% static 'canvas.js' %}"></script>
+
+  </head>
+
+  <body>
+    {% block header %}
+    <header class="top" role="header">
+      <div class="container">
+
+        <a href="/" class="navbar-brand pull-left">Handwriting</a>
+
+        <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="glyphicon glyphicon-align-justify"></span>
+        </button>
+
+        <nav class="navbar-collapse collapse" role="navigation">
+          <ul class="navbar-nav nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Create digits dataset
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/create_dataset/0">0</a></li>
+                <li><a href="/create_dataset/1">1</a></li>
+                <li><a href="/create_dataset/2">2</a></li>
+                <li><a href="/create_dataset/3">3</a></li>
+                <li><a href="/create_dataset/4">4</a></li>
+                <li><a href="/create_dataset/5">5</a></li>
+                <li><a href="/create_dataset/6">6</a></li>
+                <li><a href="/create_dataset/7">7</a></li>
+                <li><a href="/create_dataset/8">8</a></li>
+                <li><a href="/create_dataset/9">9</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Create lowercase cyrilic dataset
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/create_dataset/а">а</a></li>
+                <li><a href="/create_dataset/б">б</a></li>
+                <li><a href="/create_dataset/в">в</a></li>
+                <li><a href="/create_dataset/г">г</a></li>
+                <li><a href="/create_dataset/д">д</a></li>
+                <li><a href="/create_dataset/ѓ">ѓ</a></li>
+                <li><a href="/create_dataset/е">е</a></li>
+                <li><a href="/create_dataset/ж">ж</a></li>
+                <li><a href="/create_dataset/з">з</a></li>
+                <li><a href="/create_dataset/ѕ">ѕ</a></li>
+                <li><a href="/create_dataset/и">и</a></li>
+                <li><a href="/create_dataset/ј">ј</a></li>
+                <li><a href="/create_dataset/к">к</a></li>
+                <li><a href="/create_dataset/л">л</a></li>
+                <li><a href="/create_dataset/љ">љ</a></li>
+                <li><a href="/create_dataset/м">м</a></li>
+                <li><a href="/create_dataset/н">н</a></li>
+                <li><a href="/create_dataset/њ">њ</a></li>
+                <li><a href="/create_dataset/о">о</a></li>
+                <li><a href="/create_dataset/п">п</a></li>
+                <li><a href="/create_dataset/р">р</a></li>
+                <li><a href="/create_dataset/с">с</a></li>
+                <li><a href="/create_dataset/т">т</a></li>
+                <li><a href="/create_dataset/ќ">ќ</a></li>
+                <li><a href="/create_dataset/у">у</a></li>
+                <li><a href="/create_dataset/ф">ф</a></li>
+                <li><a href="/create_dataset/х">х</a></li>
+                <li><a href="/create_dataset/ц">ц</a></li>
+                <li><a href="/create_dataset/ч">ч</a></li>
+                <li><a href="/create_dataset/џ">џ</a></li>
+                <li><a href="/create_dataset/ш">ш</a></li>
+              </ul>
+            </li>
+            <li><a href="/digits/">Digits</a></li>
+            <li><a href="/cyrilic/">Cyrilic</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    {% endblock header %}
+    {% block banner %}{% endblock banner %}
+    {% block content %}{% endblock content %}
+  </body>
+</html>

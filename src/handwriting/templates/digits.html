@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block banner %}
+  <div class="banner">
+    <div class="container">
+      <p>Draw a digit on the canvas, then click on Predict.</p>
+    </div>
+  </div>
+{% endblock banner %}
+
+{% block content %}
+  <div class="container">
+    <div id="sheet-container">
+      <canvas id="sheet" width="300" height="300"></canvas>
+    </div>
+
+    <div id="form-container">
+      <form action="" method="post">
+        {% csrf_token %}
+        {# <input type="text" id="form_digit" name="digit" value=""> #}
+        <input type="hidden" name="width" value="">
+        <input type="hidden" name="height" value="">
+        <input type="hidden" name="image_data" value="">
+      </form>
+      <button type="button" id="submit" class="btn btn-primary" onclick="send_image_data()">Predict</button>
+      {# TODO: fix clear_canvas() #}
+      {# <button type="button" id="clear" class="btn btn-primary" onclick="clear_canvas()">Clear</button> #}
+    </div>
+
+    <div id="predictions-container">
+      <p>Result</p>
+      <p>{{ prediction }}</p>
+      <p>{{ probabilities }}</p>
+      {# <p>{{ number }}</p> #}
+    </div>
+  </div>
+{% endblock content %}

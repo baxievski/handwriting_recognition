@@ -1,0 +1,8 @@
+pg-data*/
+.vscode/
+.venv/
+.env
+prod.env
+*.pyc
+.DS_Store
+django.log
