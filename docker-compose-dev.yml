@@ -22,6 +22,7 @@ services:
       - dev.env
     volumes:
       - ./src:/code 
+      - ./log:/code/log
     expose:
       - 8000
     ports:
