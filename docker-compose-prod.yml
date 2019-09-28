@@ -6,7 +6,7 @@ services:
     env_file:
       - prod.env
     volumes:
-      - ./pg-data:/var/lib/postgresql/data:Z
+      - ./pg-data:/var/lib/postgresql/data
     ports:
       - 5432:5432 
 
@@ -22,7 +22,7 @@ services:
       - prod.env
     volumes:
       - static_volume:/code/handwriting/static
-      - ./log:/code/log:Z
+      - ./log:/code/log
     expose:
       - 8001
     command: ["./wait-for-it.sh", "db:5432", "--", "./start.sh"]
