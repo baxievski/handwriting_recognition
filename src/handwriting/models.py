@@ -52,6 +52,7 @@ class RawInputData(models.Model):
         blank=True,
         null=True
     )
+    discarded = models.BooleanField(default=False)
 
 
 class Character(models.Model):
