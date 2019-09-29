@@ -8,11 +8,11 @@ RUN chmod +x /code/poetryinstall.sh
 ARG ENV_TYPE
 RUN /code/poetryinstall.sh
 
-RUN groupadd -g 1000 appuser && useradd -r -u 999 -g appuser appuser
+RUN groupadd appuser && useradd appuser -g appuser -u 1000 
 RUN mkdir /home/appuser
 RUN chown appuser:appuser /home/appuser -R
-COPY ./src /code
 RUN chown appuser:appuser /code -R
+COPY ./src /code
 USER appuser
 
 ENV PYTHONDONTWRITEBYTECODE 1
