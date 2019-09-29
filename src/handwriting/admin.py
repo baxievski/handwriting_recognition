@@ -1,11 +1,8 @@
-import numpy as np
 from django.contrib import admin
-from django.http import HttpResponse
-from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.utils.html import format_html
-from PIL import Image
 from .models import RawInputData, Character
+# TODO: https://medium.com/@hakibenita/how-to-turn-django-admin-into-a-lightweight-dashboard-a0e0bbf609ad
 
 
 @admin.register(Character)
@@ -34,7 +31,6 @@ class CharacterAdmin(admin.ModelAdmin):
         link = reverse("admin:handwriting_rawinputdata_change", args=[obj.raw_input_data.id])
         return format_html('<a href="{}">Edit {}</a>', link, obj.raw_input_data)
     link_to_raw.short_description = 'Edit RawInputData'
-
 
 
 @admin.register(RawInputData)

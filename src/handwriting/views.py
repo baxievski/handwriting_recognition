@@ -10,9 +10,8 @@ from .models import RawInputData, Character
 from .forms import PostImageForm
 from .neural_network import NeuralNetwork
 
-# TODO: add django-debug-toolbar: https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
-# TODO: https://medium.com/@hakibenita/how-to-turn-django-admin-into-a-lightweight-dashboard-a0e0bbf609ad
 
+# TODO: add django-debug-toolbar: https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -33,11 +32,11 @@ def show_dataset_image(request, fk_id, angle):
         .first()
 
     label = normalized_data.raw_input_data.label
-    dim = normalized_data.resized_image_dimmensions
+    dimmensions = normalized_data.resized_image_dimmensions
     angle = normalized_data.rotation_angle
 
     image_data = np.array(normalized_data.image_data) * 255
-    image_data = image_data.reshape(dim)
+    image_data = image_data.reshape(dimmensions)
     im = Image.fromarray(np.uint8(image_data))
 
     response = HttpResponse(content_type="image/png")

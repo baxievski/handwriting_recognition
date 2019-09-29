@@ -64,5 +64,9 @@ class Character(models.Model):
         null=True
     )
     rotation_angle = models.IntegerField()
-    raw_input_data = models.ForeignKey(RawInputData, on_delete=models.CASCADE)
+    raw_input_data = models.ForeignKey(
+        RawInputData,
+        related_name="characters",
+        on_delete=models.CASCADE
+    )
 
