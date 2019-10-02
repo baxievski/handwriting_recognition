@@ -54,6 +54,9 @@ class RawInputData(models.Model):
     )
     discarded = models.BooleanField(default=False)
 
+    def __str__(self) -> str:
+        return f"Label: {self.label}, id: {self.id}"
+
 
 class Character(models.Model):
     image_data = NumpyArrayField(base_field=models.FloatField())
@@ -70,3 +73,5 @@ class Character(models.Model):
         on_delete=models.CASCADE
     )
 
+    def __str__(self) -> str:
+        return f"Label: {self.raw_input_data.label}, id: {self.raw_input_data.id}, rotated: {self.rotation_angle}°"
