@@ -6,9 +6,9 @@ from django.utils import timezone
 from pathlib import Path
 from PIL import Image
 from sklearn.preprocessing import OneHotEncoder
-from .models import RawInputData, Character
-from .forms import PostImageForm
-from .neural_network import NeuralNetwork
+from handwriting.models import RawInputData, Character
+from handwriting.forms import PostImageForm
+from handwriting.neural_network import NeuralNetwork
 
 
 # TODO: add django-debug-toolbar: https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
