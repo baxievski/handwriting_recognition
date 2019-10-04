@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from .models import RawInputData, Character
+from handwriting.models import RawInputData, Character, Dataset
 # TODO: https://medium.com/@hakibenita/how-to-turn-django-admin-into-a-lightweight-dashboard-a0e0bbf609ad
 
 
@@ -37,3 +37,7 @@ class CharacterAdmin(admin.ModelAdmin):
 class RawInputDataAdmin(admin.ModelAdmin):
     readonly_fields = ("original_image_dimmensions", "bounding_box")
     exclude = ('image_data',)
+
+@admin.register(Dataset)
+class DatasetAdmin(admin.ModelAdmin):
+    pass

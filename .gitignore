@@ -1,8 +1,10 @@
 log/
+notebooks/
 pg-data*/
 .vscode/
 .venv/
 .env
-prod.env
 *.pyc
 .DS_Store
+prod.env
+pg-data*
