@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from handwriting.models import RawInputData, Character, Dataset
+from handwriting.models import RawInputData, Character
 # TODO: https://medium.com/@hakibenita/how-to-turn-django-admin-into-a-lightweight-dashboard-a0e0bbf609ad
 
 
 @admin.register(Character)
 class CharacterAdmin(admin.ModelAdmin):
-    list_display = ('get_image', 'link_to_raw', 'rotation_angle', 'resized_image_dimmensions', 'is_discarded', )
+    list_display = ("get_image", "link_to_raw", "rotation_angle", "resized_image_dimmensions", "is_discarded", )
     list_filter = ("rotation_angle", "raw_input_data__label", "raw_input_data__discarded", )
     readonly_fields = ("resized_image_dimmensions", "rotation_angle")
     exclude = ("image_data", )
@@ -36,8 +36,19 @@ class CharacterAdmin(admin.ModelAdmin):
 @admin.register(RawInputData)
 class RawInputDataAdmin(admin.ModelAdmin):
     readonly_fields = ("original_image_dimmensions", "bounding_box")
-    exclude = ('image_data',)
+    exclude = ("image_data",)
 
-@admin.register(Dataset)
-class DatasetAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(Dataset)
+# class DatasetAdmin(admin.ModelAdmin):
+#     readonly_fields = ("kind",)
+#     exclude = (
+#         "training_ids",
+#         "training_labels",
+#         "training_data",
+#         "test_ids",
+#         "test_labels",
+#         "test_data",
+#         "validation_ids",
+#         "validation_labels",
+#         "validation_data",
+#     )
