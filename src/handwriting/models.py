@@ -75,34 +75,3 @@ class Character(models.Model):
 
     def __str__(self) -> str:
         return f"Label: {self.raw_input_data.label}, id: {self.raw_input_data.id}, rotated: {self.rotation_angle}°"
-
-# class Dataset(models.Model):
-#     KIND = (
-#        ("digits", "Numbers (0-9)"),
-#        ("cyrillic", "Macedonian cyrillic characters (А-Ш, а-ш)"),
-#        ("latin", "Latin characters (A-Z, a-z)"),
-#    )
-
-#     kind = models.CharField(max_length=32, choices=KIND, default="digits")
-#     created_on = models.DateTimeField("dataset created")
-#     training_ids = ArrayField(base_field=models.IntegerField())
-#     training_labels = NumpyArrayField(base_field=models.CharField(max_length=1))
-#     training_data = NumpyArrayField(
-#         base_field=NumpyArrayField(
-#             base_field=models.IntegerField()
-#         )
-#     )
-#     test_ids = ArrayField(base_field=models.IntegerField())
-#     test_labels = NumpyArrayField(base_field=models.CharField(max_length=1))
-#     test_data = NumpyArrayField(
-#         base_field=NumpyArrayField(
-#             base_field=models.IntegerField()
-#         )
-#     )
-#     validation_ids = ArrayField(base_field=models.IntegerField())
-#     validation_labels = NumpyArrayField(base_field=models.CharField(max_length=1))
-#     validation_data = NumpyArrayField(
-#         base_field=NumpyArrayField(
-#             base_field=models.IntegerField()
-#         )
-#     )
