@@ -1,8 +1,6 @@
-log/
-notebooks/
-pg-data*/
 .vscode/
 .venv/
+volumes/
 .env
 *.pyc
 .DS_Store

@@ -12,11 +12,33 @@ from handwriting.neural_network import NeuralNetwork
 
 
 class Command(BaseCommand):
-    help = 'Counts the inserted characters'
+    help = "Create dataset and train neural net on the dataset"
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--kind", type=str, help="Kind of dataset: 'digits' or 'cyrillic'."
+        )
+        parser.add_argument(
+            "--count", action="store_true", help="Just count the labels, do not train.")
 
     def handle(self, *args, **kwargs):
-        self.raw_ids_for_labels([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        kind = kwargs["kind"]
+        count = kwargs["count"]
+
+        if kind not in ("digits", "cyrillic"):
+            return
+        labels = {
+            "digits": list(range(10)),
+            "cyrillic": "АБВГДЃЕЖЗSИЈКЛЉМНЊОПРСТЌУФХЦЧЏШабвгдѓежзѕијклљмнњопрстќуфхцчџш"
+        }
+
+        self.raw_ids_for_labels(labels[kind])
+
         self.split_train_test_validate()
+
+        if count:
+            return
+
         self.train()
 
     def raw_ids_for_labels(self, l):
@@ -125,7 +147,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Training accuracy:\t{training_accuracy[-1]:.3f}"))
         self.stdout.write(self.style.SUCCESS(f"Test accuracy:\t\t{test_accuracy[-1]:.3f}"))
 
-        digits_trained = "nn_digits_trained.pkl"
+        digits_trained = Path.cwd() / "mounted" / "nn_digits_trained.pkl"
 
         with open(digits_trained, 'wb') as f:
             pickle.dump(nn_digits, f)
