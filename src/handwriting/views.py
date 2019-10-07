@@ -129,7 +129,7 @@ def digits(request):
     if not request.POST:
         return render(request, 'digits.html', context={"prediction": "", "predictions": ""})
 
-    digits_trained = Path.cwd() / 'nn_digits_trained.pkl'
+    digits_trained = Path.cwd() / "mounted" / 'nn_digits_trained.pkl'
     if not Path.is_file(digits_trained):
         return render(request, 'digits.html', context={"prediction": "Neural Network is not trained", "predictions": ""})
 
