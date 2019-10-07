@@ -140,7 +140,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'log', 'handwriting_app.log'),
+            'filename': os.path.join(BASE_DIR, 'mounted', 'handwriting_app.log'),
             'formatter': 'simple'
         },
     },
