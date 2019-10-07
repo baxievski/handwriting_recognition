@@ -6,7 +6,7 @@ services:
     env_file:
       - dev.env
     volumes:
-      - ./pg-data_dev:/var/lib/postgresql/data
+      - ./volumes/db/pg-data_dev:/var/lib/postgresql/data
     ports:
       - 5432:5432 
 
@@ -22,7 +22,7 @@ services:
       - dev.env
     volumes:
       - ./src:/code 
-      - ./log:/code/log
+      - ./volumes/web:/code/mounted
     expose:
       - 8000
     ports:
