@@ -76,7 +76,7 @@ class NeuralNetwork:
         return J, grad
 
     def predict(self, X):
-        _, _, _, _, h = self.forward_propagate(X)
+        _, _, _, _, h = self.forward_propagate(np.matrix(X))
         return h
 
     def predict_values(self, X):
@@ -117,7 +117,7 @@ class NeuralNetwork:
                 self.learning_rate *= learning_rate_decay
 
                 if verbose:
-                    print('i = {: 4d}, J = {: 6.4f}, train acc. = {: 6.4f}, test acc. = {: 6.4f}, learn rate = {: 6.5f}'.format(i, J, train_acc_history[-1], test_acc_history[-1], self.learning_rate))
+                    print('i: {: 4d} J: {: 6.4f} train acc.: {: 6.4f} test acc.: {: 6.4f} learn rate: {: 6.5f}'.format(i, J, train_acc_history[-1], test_acc_history[-1], self.learning_rate))
 
         result = {
             'J_history': J_history,

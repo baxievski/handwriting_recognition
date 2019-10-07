@@ -1,9 +1,11 @@
 import collections
-import random
 import numpy as np
+import pickle
+import random
 from django.db.models import Count
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
+from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder
 from handwriting.models import RawInputData, Character
 from handwriting.neural_network import NeuralNetwork
@@ -41,8 +43,8 @@ class Command(BaseCommand):
         self.raw_ids = raw_ids
         return True
 
-    def split_train_test_validate(self, training_ratio=0.6):
-        test_ratio = (1 - training_ratio) / 2
+    def split_train_test_validate(self, training_ratio=0.8):
+        test_ratio = (1 - training_ratio) * 0.6
         random.shuffle(self.raw_ids)
 
         train_end = int(len(self.raw_ids)*training_ratio)
@@ -52,8 +54,7 @@ class Command(BaseCommand):
 
         training_ids = self.raw_ids[:train_end]
         test_ids = self.raw_ids[test_start:]
-        validate_ids = self.raw_ids[:]
-        # self.stdout.write(f"Using: {len(training_ids)}, {len(test_ids)}, {len(validate_ids)}")
+        validate_ids = self.raw_ids[validate_start:]
 
         test_set = Character\
             .objects\
@@ -89,19 +90,19 @@ class Command(BaseCommand):
         self.validation_labels = validation_labels
         self.validation_data = validation_data
 
-        print(f"Train: {self.training_data.shape}\t{self.training_labels.shape}")
-        print(f"Test: {self.test_data.shape}\t{self.test_labels.shape}")
-        print(f"Val: {self.validation_data.shape}\t{self.validation_labels.shape}")
+        self.stdout.write(f"Train:\t\t{self.training_data.shape}\t{self.training_labels.shape}")
+        self.stdout.write(f"Test:\t\t{self.test_data.shape}\t{self.test_labels.shape}")
+        self.stdout.write(f"Validation:\t{self.validation_data.shape}\t{self.validation_labels.shape}")
 
         return True
     
     def train(self):
-        print(f"Start split_train_test_validate()")
+        print(f"Start train()")
         nn_digits = NeuralNetwork(
             input_nodes=784,
-            hidden_nodes=128,
+            hidden_nodes=256,
             output_nodes=10,
-            learning_rate=3.4
+            learning_rate=3.2
         )
 
         mnist_ohc = OneHotEncoder(sparse=False)
@@ -111,7 +112,7 @@ class Command(BaseCommand):
             y=mnist_ohc.fit_transform(self.training_labels.reshape(-1, 1)),
             X_test=self.test_data,
             y_test=mnist_ohc.fit_transform(self.test_labels.reshape(-1, 1)),
-            learning_rate_decay=0.89,
+            learning_rate_decay=0.94,
             iterations=3000,
             batch_size=30,
             verbose=True
@@ -120,7 +121,13 @@ class Command(BaseCommand):
         J = training_results['J_history']
         training_accuracy = training_results['train_acc_history']
         test_accuracy = training_results['test_acc_history']
-        print(f"training_accuracy: {training_accuracy}")
-        print(f"test_accuracy: {test_accuracy}")
-        print(f"Finish split_train_test_validate()")
-        pass
+
+        self.stdout.write(self.style.SUCCESS(f"Training accuracy:\t{training_accuracy[-1]:.3f}"))
+        self.stdout.write(self.style.SUCCESS(f"Test accuracy:\t\t{test_accuracy[-1]:.3f}"))
+
+        digits_trained = "nn_digits_trained.pkl"
+
+        with open(digits_trained, 'wb') as f:
+            pickle.dump(nn_digits, f)
+
+        return True

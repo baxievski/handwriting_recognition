@@ -126,36 +126,37 @@ def train(request):
 
 
 def digits(request):
-    context = {'prediction': '', 'predictions': ''}
-    digits_trained = Path.cwd() / 'data' / 'nn_digits_trained.pkl'
+    if not request.POST:
+        return render(request, 'digits.html', context={"prediction": "", "predictions": ""})
 
-    try:
-        with open(digits_trained, 'rb') as f_digits_trained:
-            nn_digits = pickle.load(f_digits_trained)
-    except FileNotFoundError:
-        return redirect(train)
+    digits_trained = Path.cwd() / 'nn_digits_trained.pkl'
+    if not Path.is_file(digits_trained):
+        return render(request, 'digits.html', context={"prediction": "Neural Network is not trained", "predictions": ""})
 
-    if request.method == 'POST':
-        form = PostImageForm(request.POST)
+    with open(digits_trained, 'rb') as f:
+        nn_digits = pickle.load(f)
 
-        if form.is_valid():
-            img = form.image_array
-            img = form.process_image(img)
 
-            # number = form.cleaned_data['digit']
+    form = PostImageForm(request.POST)
 
-            output_weights = nn_digits.predict(img)
 
-            probabilities = output_weights * 100 / np.sum(output_weights)
-            [probabilities] = probabilities.tolist()
-            probabilities = [(n, '{:3.1f}%'.format(pr)) for (n, pr) in enumerate(probabilities)]
+    if not form.is_valid():
+        return render(request, 'digits.html', context={"prediction": "Invalid Form", "predictions": ""})
 
-            prediction = np.asscalar(nn_digits.predict_values(img))
+    img = form.image().crop().resize((28, 28)).flatten().convert().data
 
-            context = {
-                'prediction': prediction,
-                'probabilities': probabilities,
-                # 'number': number,
-            }
+    output_weights = nn_digits.predict(img)
+
+    probabilities = output_weights * 100 / np.sum(output_weights)
+    [probabilities] = probabilities.tolist()
+    probabilities = [(n, '{:3.1f}%'.format(pr)) for (n, pr) in enumerate(probabilities)]
+
+    prediction = np.asscalar(nn_digits.predict_values(img))
+
+    context = {
+        'prediction': prediction,
+        'probabilities': probabilities,
+        # 'number': number,
+    }
 
     return render(request, 'digits.html', context=context)
