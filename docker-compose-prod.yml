@@ -22,7 +22,7 @@ services:
       - prod.env
     volumes:
       - static_volume:/code/handwriting/static
-      - ./volumes/web/log:/code/mounted
+      - ./volumes/web:/code/mounted
     expose:
       - 8001
     command: ["./wait-for-it.sh", "db:5432", "--", "./start.sh"]
