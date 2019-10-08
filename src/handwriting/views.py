@@ -1,14 +1,13 @@
 import numpy as np
 import pickle
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils import timezone
 from pathlib import Path
 from PIL import Image
-from sklearn.preprocessing import OneHotEncoder
 from handwriting.models import RawInputData, Character
 from handwriting.forms import PostImageForm
-from handwriting.neural_network import NeuralNetwork
+# from handwriting.neural_network import NeuralNetwork
 
 
 # TODO: add django-debug-toolbar: https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
@@ -76,55 +75,6 @@ def create_dataset(request, label):
     return render(request, 'create_dataset.html', context={'label': label,})
 
 
-def train(request):
-    digits_trained = Path.cwd() / 'data' / 'nn_digits_trained.pkl'
-    dataset_path = Path.cwd() / 'data' / 'balanced_dataset.npz'
-
-    with open(dataset_path, 'rb') as npz:
-        data = np.load(npz)
-
-    train_data = data['train_data']
-    train_labels = data['train_labels']
-    test_data = data['test_data']
-    test_labels = data['test_labels']
-    val_data = data['val_data']
-    val_labels = data['val_labels']
-
-    nn_digits = NeuralNetwork(
-        input_nodes=784,
-        hidden_nodes=100,
-        output_nodes=10,
-        learning_rate=3.4
-    )
-
-    mnist_ohc = OneHotEncoder(sparse=False)
-
-    training_results = nn_digits.train(
-        X=train_data,
-        y=mnist_ohc.fit_transform(train_labels.reshape(-1, 1)),
-        X_test=test_data,
-        y_test=mnist_ohc.fit_transform(test_labels.reshape(-1, 1)),
-        learning_rate_decay=0.89,
-        iterations=3000,
-        batch_size=30,
-        verbose=True
-    )
-
-    J = training_results['J_history']
-    training_accuracy = training_results['train_acc_history']
-    test_accuracy = training_results['test_acc_history']
-
-    with open(digits_trained, 'wb') as f_digits_trained:
-        pickle.dump(nn_digits, f_digits_trained)
-
-    context = {
-        'prediction': 'Training Complete',
-        'predictions': '',
-    }
-
-    return render(request, 'digits.html', context=context)
-
-
 def digits(request):
     if not request.POST:
         return render(request, 'digits.html', context={"prediction": "", "predictions": ""})
@@ -136,9 +86,7 @@ def digits(request):
     with open(digits_trained, 'rb') as f:
         nn_digits = pickle.load(f)
 
-
     form = PostImageForm(request.POST)
-
 
     if not form.is_valid():
         return render(request, 'digits.html', context={"prediction": "Invalid Form", "predictions": ""})
