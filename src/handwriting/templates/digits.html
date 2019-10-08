@@ -17,21 +17,42 @@
     <div id="form-container">
       <form action="" method="post">
         {% csrf_token %}
-        {# <input type="text" id="form_digit" name="digit" value=""> #}
         <input type="hidden" name="width" value="">
         <input type="hidden" name="height" value="">
         <input type="hidden" name="image_data" value="">
       </form>
-      <button type="button" id="submit" class="btn btn-primary" onclick="send_image_data()">Predict</button>
+
+      <button type="button" id="submit" class="btn btn-primary" onclick="send_image_data()">
+        Predict
+      </button>
+
       {# TODO: fix clear_canvas() #}
       {# <button type="button" id="clear" class="btn btn-primary" onclick="clear_canvas()">Clear</button> #}
     </div>
 
-    <div id="predictions-container">
-      <p>Result</p>
-      <p>{{ prediction }}</p>
-      <p>{{ probabilities }}</p>
-      {# <p>{{ number }}</p> #}
-    </div>
+    {% if probabilities %}
+      <div id="predictions-container">
+        <p>Prediction</p>
+        <div class="table-responsive">
+          <table class="table">
+
+            <tr>
+              <th>Label</th>
+              <th>Confidence</th>
+            <tr>
+
+          {% for result in probabilities|slice:":3" %}
+            <tr>
+              <th>{{ result.0 }}</th>
+              <th>{{ result.1|floatformat:1 }}%</th>
+            <tr>
+          {% endfor %}
+
+          </table>
+        </div> 
+      </div>
+
+    {% endif %}
+
   </div>
 {% endblock content %}

@@ -3,6 +3,7 @@ import pickle
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
+from operator import itemgetter
 from pathlib import Path
 from PIL import Image
 from handwriting.models import RawInputData, Character
@@ -77,7 +78,7 @@ def create_dataset(request, label):
 
 def digits(request):
     if not request.POST:
-        return render(request, 'digits.html', context={"prediction": "", "predictions": ""})
+        return render(request, 'digits.html', context={})
 
     digits_trained = Path.cwd() / "mounted" / 'nn_digits_trained.pkl'
     if not Path.is_file(digits_trained):
@@ -89,7 +90,8 @@ def digits(request):
     form = PostImageForm(request.POST)
 
     if not form.is_valid():
-        return render(request, 'digits.html', context={"prediction": "Invalid Form", "predictions": ""})
+        # FIXME: don't just render the same page
+        return render(request, 'digits.html', context={})
 
     img = form.image().crop().resize((28, 28)).flatten().convert().data
 
@@ -97,14 +99,11 @@ def digits(request):
 
     probabilities = output_weights * 100 / np.sum(output_weights)
     [probabilities] = probabilities.tolist()
-    probabilities = [(n, '{:3.1f}%'.format(pr)) for (n, pr) in enumerate(probabilities)]
+    probabilities = [(n, prob) for (n, prob) in enumerate(probabilities)]
 
-    prediction = np.asscalar(nn_digits.predict_values(img))
 
     context = {
-        'prediction': prediction,
-        'probabilities': probabilities,
-        # 'number': number,
+        'probabilities': sorted(probabilities, key=itemgetter(1), reverse=True),
     }
 
     return render(request, 'digits.html', context=context)
