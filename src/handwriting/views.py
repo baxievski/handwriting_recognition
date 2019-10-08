@@ -8,19 +8,9 @@ from pathlib import Path
 from PIL import Image
 from handwriting.models import RawInputData, Character
 from handwriting.forms import PostImageForm
-# from handwriting.neural_network import NeuralNetwork
 
 
 # TODO: add django-debug-toolbar: https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
-
-
 def index(request):
     return render(request, 'index.html', context={})
 
@@ -60,7 +50,6 @@ def create_dataset(request, label):
         original_image_dimmensions=form.image().data.size,
         bounding_box=form.image().data.getbbox(),
         insertion_date=timezone.now(),
-        ip_address=get_client_ip(request)
     )
     raw_input_data.save()
 

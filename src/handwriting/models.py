@@ -47,11 +47,6 @@ class RawInputData(models.Model):
         null=True
     )
     insertion_date = models.DateTimeField('date inserted')
-    ip_address = models.GenericIPAddressField(
-        default=None,
-        blank=True,
-        null=True
-    )
     discarded = models.BooleanField(default=False)
 
     def __str__(self) -> str:
