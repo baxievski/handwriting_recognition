@@ -118,7 +118,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'handwriting', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'mounted', 'static')
 STATIC_URL = '/static/'
 
 LOGGING = {
