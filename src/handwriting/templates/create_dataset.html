@@ -1,19 +1,17 @@
 {% extends "base.html" %}
 
 {% block banner %}
-  <div class="banner">
-    <div class="container">
-      <p>Draw a "{{ label }}" on the canvas.</p>
-    </div>
-  </div>
+<div class="row justify-content-center">
+  <p>Draw a "{{ label }}" on the canvas.</p>
+</div>
 {% endblock banner %}
 
 {% block content %}
-  <div class="container">
+<div class="row justify-content-center">
+  <div id="container">
     <div id="sheet-container">
       <canvas id="sheet" width="300" height="300"></canvas>
     </div>
-
     <div id="form-container">
       <form action="" method="post">
         {% csrf_token %}
@@ -21,7 +19,18 @@
         <input type="hidden" name="height" value="">
         <input type="hidden" name="image_data" value="">
       </form>
-      <button type="button" id="submit" class="btn btn-primary" onclick="send_image_data()">Insert</button>
+      <div id="buttons-container">
+        <button type="button" id="submit" class="btn btn-primary" onclick="send_image_data()">
+          Insert
+        </button>
+        <button type="button" id="clear" class="btn btn-primary" onclick="clear_canvas()">
+          Clear
+        </button>
+      </div>
     </div>
   </div>
+</div>
+
+{% load static %}
+<script src="{% static 'canvas.js' %}"></script>
 {% endblock content %}

@@ -1,9 +1,7 @@
-window.onload = function new_fabric(){
-  var canvas = new fabric.Canvas('sheet');
-  canvas.isDrawingMode = true;
-  canvas.freeDrawingBrush.width = 20;
-  canvas.freeDrawingBrush.color = "#000000";
-};
+var canvas = new fabric.Canvas('sheet');
+canvas.isDrawingMode = true;
+canvas.freeDrawingBrush.width = 20;
+canvas.freeDrawingBrush.color = "#000000";
 
 function send_image_data() {
   $('form input[name=image_data]').val(sheet.toDataURL("image/png"));
@@ -15,8 +13,5 @@ function send_image_data() {
 };
 
 function clear_canvas() {
-  var canvas = document.getElementById('sheet');
-  var context = canvas.getContext('2d');
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  new_fabric();
+  canvas.clear();
 };
