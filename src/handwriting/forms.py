@@ -13,14 +13,14 @@ class PostImageForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
-        self.helper.form_id = 'agreement_form'
-        self.helper.form_method = 'post'
+        self.helper.form_id = "agreement_form"
+        self.helper.form_method = "post"
         super().__init__(*args, **kwargs)
 
     def image(self):
-        data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
+        data_url_pattern = re.compile("data:image/(png|jpeg);base64,(.*)$")
 
-        image_data = self.cleaned_data['image_data']
+        image_data = self.cleaned_data["image_data"]
         image_data = data_url_pattern.match(image_data).group(2)
         image_data = image_data.encode()
         image_data = base64.b64decode(image_data)
@@ -48,7 +48,7 @@ class PostImageForm(forms.Form):
         inside_dimmensions = tuple(x - 4 for x in dimmensions)
 
         data = self.data.resize(inside_dimmensions, Image.BICUBIC)
-        resized = Image.new('RGBA', dimmensions, (255, 255, 255, 0))
+        resized = Image.new("RGBA", dimmensions, (255, 255, 255, 0))
         resized.paste(data, (2, 2), mask=data)
 
         self.data = resized
@@ -56,19 +56,25 @@ class PostImageForm(forms.Form):
         return self
 
     def flatten(self):
-        flattened = Image.new('RGB', (max(self.data.size), max(self.data.size)), (255, 255, 255))
+        flattened = Image.new(
+            "RGB", (max(self.data.size), max(self.data.size)), (255, 255, 255)
+        )
         flattened.paste(
             self.data,
-            ((max(self.data.size) - self.data.size[0]) // 2, (max(self.data.size) - self.data.size[1]) // 2),
-            mask=self.data)
-        flattened = flattened.convert('L')
+            (
+                (max(self.data.size) - self.data.size[0]) // 2,
+                (max(self.data.size) - self.data.size[1]) // 2,
+            ),
+            mask=self.data,
+        )
+        flattened = flattened.convert("L")
 
         self.data = flattened
 
         return self
-    
+
     def convert(self):
-        data = self.data.convert('L')
+        data = self.data.convert("L")
         data = np.array(data) / 255
 
         self.data = data.reshape(data.shape[0] * data.shape[1])

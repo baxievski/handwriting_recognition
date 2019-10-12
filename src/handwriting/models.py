@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
 
 
-
 class NumpyArrayField(ArrayField):
     def __init__(self, base_field, size=None, **kwargs):
         super(NumpyArrayField, self).__init__(base_field, size, **kwargs)
@@ -14,14 +13,13 @@ class NumpyArrayField(ArrayField):
         return "Numpy array of {}".format(self.base_field.description)
 
     def get_db_prep_value(self, value, connection, prepared=False):
-        return super(NumpyArrayField, self).get_db_prep_value(list(value), connection, prepared)
+        return super(NumpyArrayField, self).get_db_prep_value(
+            list(value), connection, prepared
+        )
 
     def deconstruct(self):
         name, path, args, kwargs = super(NumpyArrayField, self).deconstruct()
-        kwargs.update({
-            'base_field': self.base_field,
-            'size': self.size,
-        })
+        kwargs.update({"base_field": self.base_field, "size": self.size})
         return name, path, args, kwargs
 
     def to_python(self, value):
@@ -35,18 +33,12 @@ class RawInputData(models.Model):
     label = models.CharField(max_length=1)
     image_data = NumpyArrayField(base_field=models.FloatField())
     original_image_dimmensions = ArrayField(
-        base_field=models.IntegerField(),
-        default=None,
-        blank=True,
-        null=True
+        base_field=models.IntegerField(), default=None, blank=True, null=True
     )
     bounding_box = ArrayField(
-        base_field=models.IntegerField(),
-        default=None,
-        blank=True,
-        null=True
+        base_field=models.IntegerField(), default=None, blank=True, null=True
     )
-    insertion_date = models.DateTimeField('date inserted')
+    insertion_date = models.DateTimeField("date inserted")
     discarded = models.BooleanField(default=False)
 
     def __str__(self) -> str:
@@ -56,16 +48,11 @@ class RawInputData(models.Model):
 class Character(models.Model):
     image_data = NumpyArrayField(base_field=models.FloatField())
     resized_image_dimmensions = ArrayField(
-        base_field=models.IntegerField(),
-        default=None,
-        blank=True,
-        null=True
+        base_field=models.IntegerField(), default=None, blank=True, null=True
     )
     rotation_angle = models.IntegerField()
     raw_input_data = models.ForeignKey(
-        RawInputData,
-        related_name="characters",
-        on_delete=models.CASCADE
+        RawInputData, related_name="characters", on_delete=models.CASCADE
     )
 
     def __str__(self) -> str:

@@ -19,7 +19,8 @@ class Command(BaseCommand):
             "--kind", type=str, help="Kind of dataset: 'digits' or 'cyrillic'."
         )
         parser.add_argument(
-            "--count", action="store_true", help="Just count the labels, do not train.")
+            "--count", action="store_true", help="Just count the labels, do not train."
+        )
 
     def handle(self, *args, **kwargs):
         kind = kwargs["kind"]
@@ -29,7 +30,7 @@ class Command(BaseCommand):
             return
         labels = {
             "digits": list(range(10)),
-            "cyrillic": "АБВГДЃЕЖЗSИЈКЛЉМНЊОПРСТЌУФХЦЧЏШабвгдѓежзѕијклљмнњопрстќуфхцчџш"
+            "cyrillic": "АБВГДЃЕЖЗSИЈКЛЉМНЊОПРСТЌУФХЦЧЏШабвгдѓежзѕијклљмнњопрстќуфхцчџш",
         }
 
         self.raw_ids_for_labels(labels[kind])
@@ -43,12 +44,12 @@ class Command(BaseCommand):
 
     def raw_ids_for_labels(self, l):
         try:
-            labels = RawInputData\
-                .objects\
-                .filter(label__in=l)\
-                .order_by('label')\
-                .values_list('label', flat=True)\
+            labels = (
+                RawInputData.objects.filter(label__in=l)
+                .order_by("label")
+                .values_list("label", flat=True)
                 .distinct()
+            )
         except RawInputData.DoesNotExist:
             raise CommandError(f"RawInputData does not exist")
 
@@ -60,7 +61,10 @@ class Command(BaseCommand):
         min_entries = label_counts[min(label_counts, key=label_counts.get)]
 
         r = RawInputData.objects
-        raw_ids_by_label = {l: r.filter(label=l).values_list("id", flat=True)[:min_entries] for l in labels}
+        raw_ids_by_label = {
+            l: r.filter(label=l).values_list("id", flat=True)[:min_entries]
+            for l in labels
+        }
         raw_ids = [x for (_, v) in raw_ids_by_label.items() for x in v]
         self.raw_ids = raw_ids
         return True
@@ -69,40 +73,32 @@ class Command(BaseCommand):
         test_ratio = (1 - training_ratio) * 0.6
         random.shuffle(self.raw_ids)
 
-        train_end = int(len(self.raw_ids)*training_ratio)
-        test_start = int(len(self.raw_ids)*training_ratio)
-        test_end = int(len(self.raw_ids)*(training_ratio+test_ratio)) 
-        validate_start = int(len(self.raw_ids)*(training_ratio+test_ratio))
+        train_end = int(len(self.raw_ids) * training_ratio)
+        test_start = int(len(self.raw_ids) * training_ratio)
+        test_end = int(len(self.raw_ids) * (training_ratio + test_ratio))
+        validate_start = int(len(self.raw_ids) * (training_ratio + test_ratio))
 
         training_ids = self.raw_ids[:train_end]
         test_ids = self.raw_ids[test_start:]
         validate_ids = self.raw_ids[validate_start:]
 
-        test_set = Character\
-            .objects\
-            .filter(raw_input_data__pk__in=test_ids)
+        test_set = Character.objects.filter(raw_input_data__pk__in=test_ids)
         test_data = np.vstack([np.array(x.image_data) for x in test_set])
-        test_labels = test_set\
-            .values_list("raw_input_data__label", flat=True)\
-            .all()
+        test_labels = test_set.values_list("raw_input_data__label", flat=True).all()
         test_labels = np.array(test_labels)
 
-        training_set = Character\
-            .objects\
-            .filter(raw_input_data__pk__in=training_ids)
+        training_set = Character.objects.filter(raw_input_data__pk__in=training_ids)
         training_data = np.vstack([np.array(x.image_data) for x in training_set])
-        training_labels = training_set\
-            .values_list("raw_input_data__label", flat=True)\
-            .all()
+        training_labels = training_set.values_list(
+            "raw_input_data__label", flat=True
+        ).all()
         training_labels = np.array(training_labels)
 
-        validation_set = Character\
-            .objects\
-            .filter(raw_input_data__pk__in=validate_ids)
+        validation_set = Character.objects.filter(raw_input_data__pk__in=validate_ids)
         validation_data = np.vstack([np.array(x.image_data) for x in validation_set])
-        validation_labels = validation_set\
-            .values_list("raw_input_data__label", flat=True)\
-            .all()
+        validation_labels = validation_set.values_list(
+            "raw_input_data__label", flat=True
+        ).all()
         validation_labels = np.array(validation_labels)
 
         self.training_labels = training_labels
@@ -112,19 +108,20 @@ class Command(BaseCommand):
         self.validation_labels = validation_labels
         self.validation_data = validation_data
 
-        self.stdout.write(f"Train:\t\t{self.training_data.shape}\t{self.training_labels.shape}")
+        self.stdout.write(
+            f"Train:\t\t{self.training_data.shape}\t{self.training_labels.shape}"
+        )
         self.stdout.write(f"Test:\t\t{self.test_data.shape}\t{self.test_labels.shape}")
-        self.stdout.write(f"Validation:\t{self.validation_data.shape}\t{self.validation_labels.shape}")
+        self.stdout.write(
+            f"Validation:\t{self.validation_data.shape}\t{self.validation_labels.shape}"
+        )
 
         return True
-    
+
     def train(self):
         print(f"Start train()")
         nn_digits = NeuralNetwork(
-            input_nodes=784,
-            hidden_nodes=256,
-            output_nodes=10,
-            learning_rate=3.2
+            input_nodes=784, hidden_nodes=256, output_nodes=10, learning_rate=3.2
         )
 
         mnist_ohc = OneHotEncoder(sparse=False)
@@ -137,19 +134,23 @@ class Command(BaseCommand):
             learning_rate_decay=0.94,
             iterations=3000,
             batch_size=30,
-            verbose=True
+            verbose=True,
         )
 
-        J = training_results['J_history']
-        training_accuracy = training_results['train_acc_history']
-        test_accuracy = training_results['test_acc_history']
+        J = training_results["J_history"]
+        training_accuracy = training_results["train_acc_history"]
+        test_accuracy = training_results["test_acc_history"]
 
-        self.stdout.write(self.style.SUCCESS(f"Training accuracy:\t{training_accuracy[-1]:.3f}"))
-        self.stdout.write(self.style.SUCCESS(f"Test accuracy:\t\t{test_accuracy[-1]:.3f}"))
+        self.stdout.write(
+            self.style.SUCCESS(f"Training accuracy:\t{training_accuracy[-1]:.3f}")
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f"Test accuracy:\t\t{test_accuracy[-1]:.3f}")
+        )
 
         digits_trained = Path.cwd() / "mounted" / "nn_digits_trained.pkl"
 
-        with open(digits_trained, 'wb') as f:
+        with open(digits_trained, "wb") as f:
             pickle.dump(nn_digits, f)
 
         return True
