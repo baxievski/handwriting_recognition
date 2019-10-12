@@ -2,7 +2,7 @@
 
 A django application that recognizes handwritten digits.
 
-Predictions are done by a simple neural network with one hidden layer.
+Predictions are done by a simple feedforward neural network with one hidden layer.
 
 The neural network is trained on datasets (digits, cyrillic characters) stored in postgress `ArrayField`.
 
