@@ -16,24 +16,24 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--kind", type=str, help="Kind of dataset: 'digits' or 'cyrillic'."
+            "--dataset", type=str, help="'digits' or 'cyrillic'."
         )
         parser.add_argument(
             "--count", action="store_true", help="Just count the labels, do not train."
         )
 
     def handle(self, *args, **kwargs):
-        kind = kwargs["kind"]
+        dataset = kwargs["dataset"]
         count = kwargs["count"]
 
-        if kind not in ("digits", "cyrillic"):
+        if dataset not in ("digits", "cyrillic"):
             return
         labels = {
             "digits": list(range(10)),
             "cyrillic": "АБВГДЃЕЖЗSИЈКЛЉМНЊОПРСТЌУФХЦЧЏШабвгдѓежзѕијклљмнњопрстќуфхцчџш",
         }
 
-        self.raw_ids_for_labels(labels[kind])
+        self.raw_ids_for_labels(labels[dataset])
 
         self.split_train_test_validate()
 
