@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block banner %}
-  <div class="row justify-content-center">
-    <p>Draw a digit on the canvas, then click on Predict.</p>
-  </div>
+<div class="row justify-content-center mt-1">
+  <p>Draw a digit on the canvas, then click on Predict.</p>
+</div>
 {% endblock banner %}
 
 {% block content %}
@@ -12,27 +12,25 @@
     <div id="sheet-container">
       <canvas id="sheet" width="300" height="300"></canvas>
     </div>
-    <div id="form-container">
+    <div class="mt-1" id="form-container">
       <form action="" method="post">
         {% csrf_token %}
         <input type="hidden" name="width" value="">
         <input type="hidden" name="height" value="">
         <input type="hidden" name="image_data" value="">
       </form>
-      <div></div>
-      <div id="buttons-container">
-        <button type="button" id="submit" class="btn btn-outline-primary" onclick="send_image_data()">
-          Predict
-        </button>
-        <button type="button" id="clear" class="btn btn-outline-secondary" onclick="clear_canvas()">
-          Clear
-        </button>
-      </div>
+    </div>
+    <div class="buttons-container row justify-content-center mt-1">
+      <button type="button" id="submit" class="btn btn-outline-primary mr-1" onclick="send_image_data()">
+        Predict
+      </button>
+      <button type="button" id="clear" class="btn btn-outline-secondary ml-1" onclick="clear_canvas()">
+        Clear
+      </button>
     </div>
     {% if probabilities %}
-    <div id="predictions-container">
-      <p>Prediction</p>
-      <div class="table-responsive">
+    <div id="predictions-container row justify-content-center mt-1">
+      <div class="table-responsive mt-2">
         <table class="table">
           <tr>
             <th>Label</th>

@@ -13,7 +13,7 @@ class PostImageForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
-        self.helper.form_id = "agreement_form"
+        self.helper.form_id = "handwriting_input_form"
         self.helper.form_method = "post"
         super().__init__(*args, **kwargs)
 
