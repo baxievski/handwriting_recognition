@@ -54,6 +54,7 @@ web python /code/manage.py train --kind digits
 
 * [ ] Finish cyrillic dataset
 * [ ] Train on cyrillic dataset
+* [ ] lets encrypt ssl certificate
 * [ ] Form to confirm/correct prediction
 * [ ] Save input on prediction
 * [ ] Async saving
