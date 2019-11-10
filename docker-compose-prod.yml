@@ -29,8 +29,15 @@ services:
   nginx:
     depends_on:
       - web
-    build: ./nginx
+    image: linuxserver/letsencrypt
+    cap_add:
+      - NET_ADMIN
+    env_file:
+      - prod.env
     volumes:
       - ./volumes/web/static:/code/handwriting/static
+      - ./nginx/site_conf:/config/nginx/site-confs
+      - ./volumes/nginx:/config
     ports:
       - 80:80
+      - 443:443
