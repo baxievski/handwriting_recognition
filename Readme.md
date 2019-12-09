@@ -52,6 +52,7 @@ web python /code/manage.py train --kind digits
 
 ## TODO
 
+* [ ] Screenshot
 * [ ] Finish cyrillic dataset
 * [ ] Train on cyrillic dataset
 * [x] lets encrypt ssl certificate
