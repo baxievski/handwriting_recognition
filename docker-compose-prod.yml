@@ -29,7 +29,7 @@ services:
   nginx:
     depends_on:
       - web
-    image: linuxserver/letsencrypt
+    image: linuxserver/letsencrypt:1.0.0-ls79
     cap_add:
       - NET_ADMIN
     env_file:
