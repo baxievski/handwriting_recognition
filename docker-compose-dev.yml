@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   db_dev:
-    image: postgres:12.0
+    image: postgres:12.1
     env_file:
       - dev.env
     volumes:
