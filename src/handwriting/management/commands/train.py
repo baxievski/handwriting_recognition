@@ -1,10 +1,7 @@
-import collections
 import numpy as np
 import pickle
 import random
-from django.db.models import Count
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import timezone
 from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder
 from handwriting.models import RawInputData, Character

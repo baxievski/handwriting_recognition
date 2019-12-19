@@ -1,6 +1,5 @@
 import numpy as np
 from django.db import models
-from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
 
 

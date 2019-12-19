@@ -10,7 +10,8 @@ from handwriting.models import RawInputData, Character
 from handwriting.forms import PostImageForm
 
 
-# TODO: add django-debug-toolbar: https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
+# TODO: add django-debug-toolbar:
+# https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
 def index(request):
     return render(request, "index.html", context={})
 
