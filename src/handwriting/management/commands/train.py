@@ -10,34 +10,68 @@ from handwriting.neural_network import NeuralNetwork
 
 class Command(BaseCommand):
     help = "Create dataset and train neural net on the dataset"
+    labels = {
+        "digits": "0123456789",
+        "cyrillic_lowercase": "абвгдѓежзѕијклљмнњопрстќуфхцчџш",
+        "cyrillic_uppercase": "АБВГДЃЕЖЗSИЈКЛЉМНЊОПРСТЌУФХЦЧЏШ",
+    }
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--dataset", type=str, help="'digits' or 'cyrillic'."
+            "--dataset",
+            type=str,
+            help="'digits', 'cyrillic_lowercase', or 'cyrillic_uppercase'."
         )
         parser.add_argument(
-            "--count", action="store_true", help="Just count the labels, do not train."
+            "--count", action="store_true", help="Count the labels, do not train."
+        )
+        parser.add_argument(
+            "--learning_rate",
+            type=float,
+            help="Initial learning rate"
+        )
+        parser.add_argument(
+            "--learning_rate_decay",
+            type=float,
+            help="Learning rate decay"
+        )
+        parser.add_argument(
+            "--batch_size",
+            type=int,
+            help="Batch size"
+        )
+        parser.add_argument(
+            "--iterations",
+            type=int,
+            help="Number of iterations"
+        )
+        parser.add_argument(
+            "--hidden_nodes",
+            type=int,
+            help="Number of nodes in the hidden layer of the NN."
         )
 
     def handle(self, *args, **kwargs):
         dataset = kwargs["dataset"]
         count = kwargs["count"]
+        hidden_nodes = kwargs["hidden_nodes"]
+        learning_rate = kwargs["learning_rate"]
+        learning_rate_decay = kwargs["learning_rate_decay"]
+        iterations = kwargs["iterations"]
+        batch_size = kwargs["batch_size"]
 
-        if dataset not in ("digits", "cyrillic"):
+        if dataset not in Command.labels.keys():
+            self.stdout.write(f"Unknown dataset: '{dataset}', must be one of: {Command.labels.keys()}")
             return
-        labels = {
-            "digits": list(range(10)),
-            "cyrillic": "АБВГДЃЕЖЗSИЈКЛЉМНЊОПРСТЌУФХЦЧЏШабвгдѓежзѕијклљмнњопрстќуфхцчџш",
-        }
 
-        self.raw_ids_for_labels(labels[dataset])
+        self.raw_ids_for_labels(Command.labels[dataset])
 
         self.split_train_test_validate()
 
         if count:
             return
 
-        self.train()
+        self.train(dataset, hidden_nodes, learning_rate, learning_rate_decay, iterations, batch_size)
 
     def raw_ids_for_labels(self, l):
         try:
@@ -115,10 +149,20 @@ class Command(BaseCommand):
 
         return True
 
-    def train(self):
-        print(f"Start train()")
+    def train(
+            self,
+            dataset,
+            hidden_nodes=256,
+            learning_rate=3.2,
+            learning_rate_decay=0.94,
+            iterations=3000,
+            batch_size=30):
+        print(f"Start train() on {dataset}")
         nn_digits = NeuralNetwork(
-            input_nodes=784, hidden_nodes=256, output_nodes=10, learning_rate=3.2
+            input_nodes=784,
+            hidden_nodes=hidden_nodes,
+            output_nodes=len(Command.labels[dataset]),
+            learning_rate=learning_rate
         )
 
         mnist_ohc = OneHotEncoder(sparse=False)
@@ -128,9 +172,9 @@ class Command(BaseCommand):
             y=mnist_ohc.fit_transform(self.training_labels.reshape(-1, 1)),
             X_test=self.test_data,
             y_test=mnist_ohc.fit_transform(self.test_labels.reshape(-1, 1)),
-            learning_rate_decay=0.94,
-            iterations=3000,
-            batch_size=30,
+            learning_rate_decay=learning_rate_decay,
+            iterations=iterations,
+            batch_size=batch_size,
             verbose=True,
         )
 
@@ -145,9 +189,9 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Test accuracy:\t\t{test_accuracy[-1]:.3f}")
         )
 
-        digits_trained = Path.cwd() / "mounted" / "nn_digits_trained.pkl"
+        nn_trained = Path.cwd() / "mounted" / f"nn_{dataset}_trained.pkl"
 
-        with open(digits_trained, "wb") as f:
+        with open(nn_trained, "wb") as f:
             pickle.dump(nn_digits, f)
 
         return True
