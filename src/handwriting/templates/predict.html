@@ -2,7 +2,7 @@
 
 {% block banner %}
 <div class="row justify-content-center mt-1">
-  <p>Draw a digit on the canvas, then click on Predict.</p>
+  <p>Draw a single character out of "{{ labels }}" on the canvas, then click on Predict.</p>
 </div>
 {% endblock banner %}
 
@@ -34,7 +34,7 @@
         <table class="table">
           <tr>
             <th>Label</th>
-            <th>Confidence</th>
+            <th>Probability</th>
           <tr>
         {% for result in probabilities|slice:":3" %}
           <tr>

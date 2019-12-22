@@ -13,7 +13,7 @@ from handwriting.forms import PostImageForm
 # TODO: add django-debug-toolbar:
 # https://django-debug-toolbar.readthedocs.io/en/stable/installation.html#getting-the-code
 def index(request):
-    return render(request, "index.html", context={})
+    return render(request, "index.html")
 
 
 def show_dataset_image(request, fk_id, angle):
@@ -73,35 +73,46 @@ def create_dataset(request, label):
     return render(request, "create_dataset.html", context={"label": label})
 
 
-def digits(request):
+def predict(request, dataset):
+    if dataset not in ("digits", "cyrillic_lowercase"):
+        # FIXME: don't just render the same page
+        return render(request, "predict.html", context={})
+
+    if dataset == "digits":
+        labels = "0123456789"
+    elif dataset == "cyrillic_lowercase":
+        labels = "абвгдѓежзѕијклљмнњопрстќуфхцчџш"
+
+    labels = sorted(labels)
+    labels = "".join(labels)
+    
     if not request.POST:
-        return render(request, "digits.html", context={})
+        return render(request, "predict.html", context={"labels": labels, })
 
-    digits_trained = Path.cwd() / "mounted" / "nn_digits_trained.pkl"
-    if not Path.is_file(digits_trained):
-        return render(
-            request,
-            "digits.html",
-            context={"prediction": "Neural Network is not trained", "predictions": ""},
-        )
+    trained_nn_path = Path.cwd() / "mounted" / f"nn_{dataset}_trained.pkl"
+    if not Path.is_file(trained_nn_path):
+        return render(request, "predict.html", context={"labels": labels, })
 
-    with open(digits_trained, "rb") as f:
-        nn_digits = pickle.load(f)
+    with open(trained_nn_path, "rb") as f:
+        trained_nn = pickle.load(f)
 
     form = PostImageForm(request.POST)
 
     if not form.is_valid():
         # FIXME: don't just render the same page
-        return render(request, "digits.html", context={})
+        return render(request, "predict.html", context={"labels": labels, })
 
     img = form.image().crop().resize((28, 28)).flatten().convert().data
 
-    output_weights = nn_digits.predict(img)
+    output_weights = trained_nn.predict(img)
 
     probabilities = output_weights * 100 / np.sum(output_weights)
     [probabilities] = probabilities.tolist()
-    probabilities = [(n, prob) for (n, prob) in enumerate(probabilities)]
+    probabilities = [(labels[n], prob) for (n, prob) in enumerate(probabilities)]
 
-    context = {"probabilities": sorted(probabilities, key=itemgetter(1), reverse=True)}
+    context = {
+        "probabilities": sorted(probabilities, key=itemgetter(1), reverse=True),
+        "labels": labels,
+    }
 
-    return render(request, "digits.html", context=context)
+    return render(request, "predict.html", context=context)
